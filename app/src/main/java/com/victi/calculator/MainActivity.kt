@@ -79,7 +79,7 @@ class MainActivity : AppCompatActivity() {
             }
             override fun onAnimationEnd(animation: Animator) {
                 super.onAnimationEnd(animation)
-                endingColorFrame.animate().alpha(0f).setDuration(400)
+                endingColorFrame.animate().alpha(0f).duration = 400
                 calcArea.removeView(startingColorFrame)
                 //calcArea.removeView(endingColorFrame)
             }
