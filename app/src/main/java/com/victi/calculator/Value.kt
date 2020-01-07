@@ -9,7 +9,7 @@ import kotlin.Double.Companion.POSITIVE_INFINITY
  */
 data class Value(val textualValue: String) {
 
-    var resolvedValue = NaN
+    private var resolvedValue = NaN
 
     /**
      * Resolves this expression and returns it. Also caches it in the resolvedValue field.
@@ -32,14 +32,14 @@ data class Value(val textualValue: String) {
 
             if (getOperationForChar(c) == Operation.NEGATIVE){
                 if (index < textualValue.lastIndex && getOperationForChar(textualValue[index+1]) == Operation.INFINITY){
-                    tokens.add(Operation._NEGATIVE_INFINITY)
+                    tokens.add(Operation.NEGATIVE_INFINITY_)
                     index+=2
                     continue
                 }
             }
 
             if(c.isWhitespace()) {
-                index ++
+                index++
                 continue
             }
 
@@ -112,15 +112,14 @@ data class Value(val textualValue: String) {
         }
 
         flatten(tokens, Operation.FACTORIAL)
-        flatten(tokens, Operation._NEGATIVE_INFINITY, Operation.INFINITY, Operation.NEGATIVE)
-        flatten(tokens, Operation.NEGATIVE)
+        flatten(tokens, Operation.NEGATIVE_INFINITY_, Operation.INFINITY, Operation.NEGATIVE)
         flatten(tokens, Operation.MODULO)
 
         // flatten based off of BEDMAS with respect to specials ops
         flatten(tokens, Operation.POWER)
-        flatten(tokens, Operation.ROOT)
-        flatten(tokens, Operation.DIVIDE, Operation.MULTIPLY, Operation.INFINITY)
-        flatten(tokens, Operation.PLUS, Operation.MINUS, Operation.INFINITY)
+        flatten(tokens, Operation.ROOT, Operation.TAN, Operation.ATAN, Operation.COS, Operation.ACOS, Operation.SIN, Operation.ASIN, Operation.LOG, Operation.LN)
+        flatten(tokens, Operation.DIVIDE, Operation.MULTIPLY)
+        flatten(tokens, Operation.PLUS, Operation.MINUS)
 
         // special logic operators
         flatten(tokens, Operation.LT, Operation.GT, Operation.EQUALITY)

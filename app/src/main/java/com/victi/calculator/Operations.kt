@@ -1,7 +1,6 @@
 package com.victi.calculator
 
-import kotlin.math.pow
-import kotlin.math.sqrt
+import kotlin.math.*
 
 enum class Operation {
 
@@ -20,7 +19,15 @@ enum class Operation {
     FACTORIAL,
     INFINITY,
     NEGATIVE,
-    _NEGATIVE_INFINITY;
+    NEGATIVE_INFINITY_,
+    SIN,
+    ASIN,
+    COS,
+    ACOS,
+    TAN,
+    ATAN,
+    LOG,
+    LN;
 
     /**
      * @return Returns whether or not this operation requires a value to the left of it.
@@ -28,10 +35,18 @@ enum class Operation {
     fun requireLeftValue(): Boolean {
         return when(this) {
             NEGATIVE -> false
-            _NEGATIVE_INFINITY -> false
+            NEGATIVE_INFINITY_ -> false
             INFINITY -> false
             FACTORIAL -> true
             ROOT -> false
+            TAN -> false
+            ATAN -> false
+            COS -> false
+            ACOS -> false
+            SIN -> false
+            ASIN -> false
+            LOG -> false
+            LN -> false
             else -> true
         }
     }
@@ -41,7 +56,7 @@ enum class Operation {
      */
     fun requireRightValue(): Boolean {
         return when (this) {
-            _NEGATIVE_INFINITY -> false
+            NEGATIVE_INFINITY_ -> false
             INFINITY -> false
             FACTORIAL -> false
             else -> true
@@ -65,6 +80,14 @@ enum class Operation {
             AND -> return if((a > 0.0) && (b > 0.0)) 1.0 else 0.0
             OR -> return if((a > 0.0) || (b > 0.0)) 1.0 else 0.0
             ROOT -> return sqrt(b)
+            TAN -> return tan(b)
+            ATAN -> return atan(b)
+            SIN -> return sin(b)
+            ASIN -> return asin(b)
+            COS -> return cos(b)
+            ACOS -> return acos(b)
+            LOG -> return log10(b)
+            LN -> return ln(b)
             FACTORIAL -> {
                 if(a > 34f) {
                     throw IllegalArgumentException("Factorial number too high: $a")
@@ -73,18 +96,15 @@ enum class Operation {
                 return factorial(a.toInt())
             }
             INFINITY -> return Double.POSITIVE_INFINITY
-            _NEGATIVE_INFINITY -> return Double.NEGATIVE_INFINITY
+            NEGATIVE_INFINITY_ -> return Double.NEGATIVE_INFINITY
             NEGATIVE -> return b * -1.0
             else -> throw IllegalArgumentException("Unknown operation: $name")
         }
     }
 
-    private fun factorial(i: Int): Double {
+    private fun factorial(num: Int): Double {
         var result = 1.0
-        for(j in 1..i) {
-            result *= j
-        }
-
+        for(i in 2..num) result *= i
         return result
     }
 }
@@ -120,6 +140,22 @@ fun getOperationForChar(c: Char): Operation? {
         return Operation.FACTORIAL
     } else if(c == '∞'){
         return Operation.INFINITY
+    } else if(c == 't'){
+        return Operation.TAN
+    } else if(c == 'y'){
+        return Operation.ATAN
+    } else if(c == 'c'){
+        return Operation.COS
+    } else if(c == 'v'){
+        return Operation.ACOS
+    } else if(c == 's'){
+        return Operation.SIN
+    } else if(c == 'a'){
+        return Operation.ASIN
+    } else if(c == 'l'){
+        return Operation.LOG
+    } else if(c == 'n'){
+        return Operation.LN
     }
 
     return null

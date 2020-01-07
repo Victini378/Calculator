@@ -2,27 +2,29 @@ package com.victi.calculator
 
 import android.animation.Animator
 import android.animation.AnimatorListenerAdapter
-import android.graphics.Color
-import android.graphics.drawable.RippleDrawable
 import android.os.Bundle
-import android.text.style.ForegroundColorSpan
+import android.text.Spannable
+import android.text.SpannableString
+import android.text.style.RelativeSizeSpan
 import android.view.View
 import android.view.ViewAnimationUtils
 import android.view.ViewGroup
+import android.view.WindowManager
 import android.view.animation.AccelerateInterpolator
-import android.view.animation.AlphaAnimation
 import android.widget.Button
 import android.widget.FrameLayout
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
 import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers.IO
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import kotlin.Double.Companion.NEGATIVE_INFINITY
 import kotlin.Double.Companion.POSITIVE_INFINITY
+import kotlin.math.roundToInt
 import kotlin.math.sqrt
-import kotlinx.coroutines.*
-import kotlinx.coroutines.Dispatchers.IO
 
 
 class MainActivity : AppCompatActivity() {
@@ -31,26 +33,7 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        drawer.layoutParams.width = (resources.displayMetrics.widthPixels * 0.75).toInt()
-        drawer.layoutParams.height = (resources.displayMetrics.heightPixels * 0.595).toInt()
-
-        button_delete.setOnClickListener {
-            memCalc.text = memCalc.text.dropLast(1)
-            if (memCalc.text.isEmpty()) directCalc.text = ""
-            else resolve()
-        }
-
-        button_delete.setOnLongClickListener {
-            clearRippleEffect()
-            true
-        }
-
-        button_enter.setOnClickListener {
-            if (memCalc.text.isNotEmpty() && directCalc.text.isNotEmpty() && (!memCalc.text.contains("∞") || directCalc.text.contains("∞"))) {
-                memCalc.text = directCalc.text
-                directCalc.text = ""
-            }
-        }
+        inizializeUI()
     }
 
     private fun clearRippleEffect() {
@@ -90,25 +73,25 @@ class MainActivity : AppCompatActivity() {
         circularReveal.addListener(object : AnimatorListenerAdapter() {
             override fun onAnimationStart(animation: Animator?) {
                 super.onAnimationStart(animation)
-                CoroutineScope(IO).launch{
+                CoroutineScope(IO).launch {
                     clear()
                 }
             }
             override fun onAnimationEnd(animation: Animator) {
                 super.onAnimationEnd(animation)
+                endingColorFrame.animate().alpha(0f).setDuration(400)
                 calcArea.removeView(startingColorFrame)
-                calcArea.removeView(endingColorFrame)
+                //calcArea.removeView(endingColorFrame)
             }
         })
         // customize the animation here
-        circularReveal.duration = 700
-        circularReveal.interpolator = AccelerateInterpolator()
+        circularReveal.setDuration(600).interpolator = AccelerateInterpolator()
         circularReveal.start()
     }
 
     private suspend fun clear() {
-        delay(300)
-        memCalc.text = ""
+        delay(280)
+        runOnUiThread { memCalc.text = "" }
         directCalc.text = ""
     }
 
@@ -117,10 +100,17 @@ class MainActivity : AppCompatActivity() {
             val c = "÷×−+."
             if (memCalc.text.isEmpty()) return
             var expression = memCalc.text.toString()
-            if(expression.last() == '√') return
             expression = expression
-                .replace("π", "3.1415926536")
-                .replace("e", "2.7182818285")
+                .replace("π", Math.PI.toString())
+                .replace("e", Math.E.toString())
+                .replace("atan", "y")
+                .replace("acos", "v")
+                .replace("asin", "a")
+                .replace("tan", "t")
+                .replace("cos", "c")
+                .replace("sin", "s")
+                .replace("log", "l")
+                .replace("ln", "n")
             if (c.contains(expression.last())) expression = expression.dropLast(1)
             val result = Value(expression).resolve()
             when {
@@ -137,13 +127,84 @@ class MainActivity : AppCompatActivity() {
 
     fun onClick(v : View){
         val btn = v as Button
-        val c = "÷×−+."
+        val c = "÷×−+.-"
         if (memCalc.text.isEmpty() && btn.text.first() == '−' || c.all { it != btn.text.first() }){
             if(btn.text.first() == '−') memCalc.append("-")
             else memCalc.append(btn.text.toString())
         }
-        else if (memCalc.text.isNotEmpty() && (c.all { it != memCalc.text.last() } || c.all { it != btn.text.first() }))
-            memCalc.append(btn.text.toString())
+        else if (memCalc.text.isNotEmpty()) {
+            if (memCalc.text.last() != '-' && c.contains(memCalc.text.last()) && btn.text.first() == '−') memCalc.append("-")
+            else if (c.all { it != memCalc.text.last() } || c.all { it != btn.text.first() }) memCalc.append(btn.text.toString())
+        }
         resolve()
+    }
+
+    private fun inizializeUI(){
+        window.setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN)
+
+        val n = 3
+        val m = n+4+1
+        var span = SpannableString("cos\nacos")
+        span.setSpan(RelativeSizeSpan(0.6f), n, m, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+        button_cos.text = span
+        span = SpannableString("sin\nasin")
+        span.setSpan(RelativeSizeSpan(0.6f), n, m, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+        button_sin.text = span
+        span = SpannableString("tan\natan")
+        span.setSpan(RelativeSizeSpan(0.6f), n, m, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+        button_tan.text = span
+        /*span = SpannableString("cot\nacot")
+        span.setSpan(RelativeSizeSpan(0.6f), n, m, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+        button_cot.text = span*/
+
+        button_tan.setOnClickListener {
+            memCalc.append("tan")
+            resolve()
+        }
+        button_tan.setOnLongClickListener {
+            memCalc.append("atan")
+            resolve()
+            true
+        }
+        button_cos.setOnClickListener {
+            memCalc.append("cos")
+            resolve()
+        }
+        button_cos.setOnLongClickListener {
+            memCalc.append("acos")
+            resolve()
+            true
+        }
+        button_sin.setOnClickListener {
+            memCalc.append("sin")
+            resolve()
+        }
+        button_sin.setOnLongClickListener {
+            memCalc.append("asin")
+            resolve()
+            true
+        }
+
+        button_delete.setOnClickListener {
+            memCalc.text = memCalc.text.dropLast(1)
+            if (memCalc.text.isEmpty()) directCalc.text = ""
+            else resolve()
+        }
+
+        button_delete.setOnLongClickListener {
+            clearRippleEffect()
+            true
+        }
+
+        button_enter.setOnClickListener {
+            if (memCalc.text.isNotEmpty() && directCalc.text.isNotEmpty() && (!memCalc.text.contains("∞") || directCalc.text.contains("∞"))) {
+                if (directCalc.text.contains("Error")) memCalc.text = ""
+                else memCalc.text = directCalc.text
+                directCalc.text = ""
+            }
+        }
+
+        drawer.layoutParams.width = (resources.displayMetrics.widthPixels * 0.75).roundToInt()
+        drawer.layoutParams.height = (resources.displayMetrics.heightPixels * 0.62).roundToInt()
     }
 }
