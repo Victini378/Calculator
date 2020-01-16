@@ -3,13 +3,14 @@ package com.victi.calculator
 import android.animation.Animator
 import android.animation.AnimatorListenerAdapter
 import android.os.Bundle
-import android.text.Spannable
+import android.text.Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
 import android.text.SpannableString
 import android.text.style.RelativeSizeSpan
 import android.view.View
+import android.view.View.*
 import android.view.ViewAnimationUtils
 import android.view.ViewGroup
-import android.view.WindowManager
+import android.view.WindowManager.LayoutParams.FLAG_FULLSCREEN
 import android.view.animation.AccelerateInterpolator
 import android.widget.Button
 import android.widget.FrameLayout
@@ -34,6 +35,11 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
 
         inizializeUI()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        hideBars()
     }
 
     private fun clearRippleEffect() {
@@ -139,22 +145,43 @@ class MainActivity : AppCompatActivity() {
         resolve()
     }
 
+    private fun hideBars(){
+        window.decorView.systemUiVisibility = (
+                SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                        or SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                        or SYSTEM_UI_FLAG_HIDE_NAVIGATION
+                        or SYSTEM_UI_FLAG_FULLSCREEN
+                        or SYSTEM_UI_FLAG_IMMERSIVE_STICKY
+                )
+    }
+
     private fun inizializeUI(){
-        window.setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN)
+        hideBars()
+
+        val height = resources.displayMetrics.heightPixels
+        val width = resources.displayMetrics.widthPixels
+        val ratio = if (height > width) height/width else width/height
+
+        drawer.layoutParams.width = (width * 0.75).roundToInt()
+        drawer.layoutParams.height = (height * 0.665).roundToInt()
+        if (ratio != 16/9) {
+            numbers.layoutParams.height = (height * 0.68).roundToInt()
+            operators.layoutParams.height = (height * 0.68).roundToInt()
+        }
 
         val n = 3
         val m = n+4+1
         var span = SpannableString("cos\nacos")
-        span.setSpan(RelativeSizeSpan(0.6f), n, m, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+        span.setSpan(RelativeSizeSpan(0.6f), n, m, SPAN_EXCLUSIVE_EXCLUSIVE)
         button_cos.text = span
         span = SpannableString("sin\nasin")
-        span.setSpan(RelativeSizeSpan(0.6f), n, m, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+        span.setSpan(RelativeSizeSpan(0.6f), n, m, SPAN_EXCLUSIVE_EXCLUSIVE)
         button_sin.text = span
         span = SpannableString("tan\natan")
-        span.setSpan(RelativeSizeSpan(0.6f), n, m, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+        span.setSpan(RelativeSizeSpan(0.6f), n, m, SPAN_EXCLUSIVE_EXCLUSIVE)
         button_tan.text = span
         /*span = SpannableString("cot\nacot")
-        span.setSpan(RelativeSizeSpan(0.6f), n, m, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+        span.setSpan(RelativeSizeSpan(0.6f), n, m, SPAN_EXCLUSIVE_EXCLUSIVE)
         button_cot.text = span*/
 
         button_tan.setOnClickListener {
@@ -203,8 +230,5 @@ class MainActivity : AppCompatActivity() {
                 directCalc.text = ""
             }
         }
-
-        drawer.layoutParams.width = (resources.displayMetrics.widthPixels * 0.75).roundToInt()
-        drawer.layoutParams.height = (resources.displayMetrics.heightPixels * 0.62).roundToInt()
     }
 }
