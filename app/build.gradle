@@ -9,8 +9,8 @@ android {
     buildToolsVersion "29.0.2"
     defaultConfig {
         applicationId "com.victi.calculator"
-        minSdkVersion 22
-        targetSdkVersion 26
+        minSdkVersion 26
+        targetSdkVersion 29
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
@@ -22,7 +22,7 @@ android {
         }
         debug {
             versionNameSuffix = 'Calculator'
-            applicationIdSuffix = 'Calc'
+            applicationIdSuffix = '.Calc'
         }
     }
 }

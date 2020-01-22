@@ -30,6 +30,8 @@ import kotlin.math.sqrt
 
 class MainActivity : AppCompatActivity() {
 
+    private var point_flag = false
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -47,7 +49,7 @@ class MainActivity : AppCompatActivity() {
         val endingColorFrame = ConstraintLayout(calcArea.context)
         startingColorFrame.background = calcArea.foreground
         endingColorFrame.background = ContextCompat.getDrawable(applicationContext, R.drawable.calc_area_ripple)
-        endingColorFrame.visibility = View.GONE
+        endingColorFrame.visibility = GONE
         calcArea.addView(
             endingColorFrame,
             0,
@@ -75,7 +77,7 @@ class MainActivity : AppCompatActivity() {
             0f,
             finalRadius.toFloat()
         )
-        endingColorFrame.visibility = View.VISIBLE
+        endingColorFrame.visibility = VISIBLE
         circularReveal.addListener(object : AnimatorListenerAdapter() {
             override fun onAnimationStart(animation: Animator?) {
                 super.onAnimationStart(animation)
@@ -127,21 +129,26 @@ class MainActivity : AppCompatActivity() {
             }
             println(memCalc.text.toString())
         } catch (e: IllegalArgumentException){
-            directCalc.text = "Error"
+            directCalc.text = getString(R.string.error)
         }
     }
 
     fun onClick(v : View){
         val btn = v as Button
         val c = "÷×−+.-"
-        if (memCalc.text.isEmpty() && btn.text.first() == '−' || c.all { it != btn.text.first() }){
+        val operator = "÷×−+"
+
+        if (operator.contains(btn.text.first())) point_flag = false
+        if (!point_flag && memCalc.text.isEmpty() && btn.text.first() == '−' || c.all { it != btn.text.first() }){
             if(btn.text.first() == '−') memCalc.append("-")
             else memCalc.append(btn.text.toString())
         }
-        else if (memCalc.text.isNotEmpty()) {
+        else if (!point_flag && memCalc.text.isNotEmpty()) {
             if (memCalc.text.last() != '-' && c.contains(memCalc.text.last()) && btn.text.first() == '−') memCalc.append("-")
             else if (c.all { it != memCalc.text.last() } || c.all { it != btn.text.first() }) memCalc.append(btn.text.toString())
+            if(memCalc.text.last() == '.') point_flag = true
         }
+
         resolve()
     }
 
@@ -157,6 +164,9 @@ class MainActivity : AppCompatActivity() {
 
     private fun inizializeUI(){
         hideBars()
+
+
+        val operator = "÷×−+"
 
         val height = resources.displayMetrics.heightPixels
         val width = resources.displayMetrics.widthPixels
@@ -215,11 +225,13 @@ class MainActivity : AppCompatActivity() {
         button_delete.setOnClickListener {
             memCalc.text = memCalc.text.dropLast(1)
             if (memCalc.text.isEmpty()) directCalc.text = ""
+            if (memCalc.text.isNotEmpty() && operator.contains(memCalc.text.last())) point_flag = false
             else resolve()
         }
 
         button_delete.setOnLongClickListener {
             clearRippleEffect()
+            point_flag = false
             true
         }
 
@@ -227,6 +239,7 @@ class MainActivity : AppCompatActivity() {
             if (memCalc.text.isNotEmpty() && directCalc.text.isNotEmpty() && (!memCalc.text.contains("∞") || directCalc.text.contains("∞"))) {
                 if (directCalc.text.contains("Error")) memCalc.text = ""
                 else memCalc.text = directCalc.text
+                if(!directCalc.text.contains(".")) point_flag = false
                 directCalc.text = ""
             }
         }
