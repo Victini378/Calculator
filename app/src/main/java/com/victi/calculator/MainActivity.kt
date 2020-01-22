@@ -69,7 +69,7 @@ class MainActivity : AppCompatActivity() {
         val finalRadius = sqrt((calcArea.width * calcArea.width + calcArea.height * calcArea.height).toDouble())
         val sourceX: Int = calcArea.width - button_delete.width/2
         val sourceY: Int = calcArea.height
-        // this is API 21 minimum. Add proper checks
+        // this is API 21 minimum. It's better to add proper checks
         val circularReveal = ViewAnimationUtils.createCircularReveal(
             endingColorFrame,
             sourceX,
