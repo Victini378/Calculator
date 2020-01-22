@@ -10,7 +10,6 @@ import android.view.View
 import android.view.View.*
 import android.view.ViewAnimationUtils
 import android.view.ViewGroup
-import android.view.WindowManager.LayoutParams.FLAG_FULLSCREEN
 import android.view.animation.AccelerateInterpolator
 import android.widget.Button
 import android.widget.FrameLayout
@@ -30,13 +29,13 @@ import kotlin.math.sqrt
 
 class MainActivity : AppCompatActivity() {
 
-    private var point_flag = false
+    private var pointFlag = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        inizializeUI()
+        initializeUI()
     }
 
     override fun onResume() {
@@ -138,15 +137,15 @@ class MainActivity : AppCompatActivity() {
         val c = "÷×−+.-"
         val operator = "÷×−+"
 
-        if (operator.contains(btn.text.first())) point_flag = false
-        if (!point_flag && memCalc.text.isEmpty() && btn.text.first() == '−' || c.all { it != btn.text.first() }){
+        if (operator.contains(btn.text.first())) pointFlag = false
+        if (!pointFlag && memCalc.text.isEmpty() && btn.text.first() == '−' || c.all { it != btn.text.first() }){
             if(btn.text.first() == '−') memCalc.append("-")
             else memCalc.append(btn.text.toString())
         }
-        else if (!point_flag && memCalc.text.isNotEmpty()) {
+        else if (!pointFlag && memCalc.text.isNotEmpty()) {
             if (memCalc.text.last() != '-' && c.contains(memCalc.text.last()) && btn.text.first() == '−') memCalc.append("-")
             else if (c.all { it != memCalc.text.last() } || c.all { it != btn.text.first() }) memCalc.append(btn.text.toString())
-            if(memCalc.text.last() == '.') point_flag = true
+            if(memCalc.text.last() == '.') pointFlag = true
         }
 
         resolve()
@@ -162,7 +161,7 @@ class MainActivity : AppCompatActivity() {
                 )
     }
 
-    private fun inizializeUI(){
+    private fun initializeUI(){
         hideBars()
 
 
@@ -225,13 +224,13 @@ class MainActivity : AppCompatActivity() {
         button_delete.setOnClickListener {
             memCalc.text = memCalc.text.dropLast(1)
             if (memCalc.text.isEmpty()) directCalc.text = ""
-            if (memCalc.text.isNotEmpty() && operator.contains(memCalc.text.last())) point_flag = false
+            if (memCalc.text.isNotEmpty() && operator.contains(memCalc.text.last())) pointFlag = false
             else resolve()
         }
 
         button_delete.setOnLongClickListener {
             clearRippleEffect()
-            point_flag = false
+            pointFlag = false
             true
         }
 
@@ -239,7 +238,7 @@ class MainActivity : AppCompatActivity() {
             if (memCalc.text.isNotEmpty() && directCalc.text.isNotEmpty() && (!memCalc.text.contains("∞") || directCalc.text.contains("∞"))) {
                 if (directCalc.text.contains("Error")) memCalc.text = ""
                 else memCalc.text = directCalc.text
-                if(!directCalc.text.contains(".")) point_flag = false
+                if(!directCalc.text.contains(".")) pointFlag = false
                 directCalc.text = ""
             }
         }
