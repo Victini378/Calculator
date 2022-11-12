@@ -18,7 +18,9 @@ data class Value(val textualValue: String) {
         // try and parse the text as a literal float for the most basic parsing
         try {
             resolvedValue = textualValue.toDouble()
-        } catch (e: NumberFormatException) {}
+        } catch (e: NumberFormatException) {
+            println(e.message)
+        }
 
         val tokens = ArrayList<Any>()
 
@@ -152,11 +154,10 @@ fun flatten(tokens: ArrayList<Any>, vararg ops: Operation) {
             for(o in ops) {
                 if (tokens[i] == o) {
                     // left and right tokens should be floats
-                    if(i == 0 && o.requireLeftValue()) {
+                    if (i == 0 && o.requireLeftValue())
                         throw IllegalArgumentException("Expression cannot begin with an operator: $o")
-                    } else if(i == tokens.size - 1 && o.requireRightValue()) {
+                    else if(i == tokens.size - 1 && o.requireRightValue())
                         throw IllegalArgumentException("Expression cannot end with an operator: $o")
-                    }
 
                     if(o.requireRightValue() && o.requireLeftValue()) {
                         val a: Double = tokens[i - 1] as? Double ?: throw IllegalArgumentException("Chained operators: $o and ${tokens[i - 1]}")
