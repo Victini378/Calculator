@@ -110,55 +110,79 @@ enum class Operation {
 }
 
 fun getOperationForChar(c: Char): Operation? {
-    if(c == '+') {
-        return Operation.PLUS
-    } else if(c == '−') {
-        return Operation.MINUS
-    } else if(c == '-') {
-        return Operation.NEGATIVE
-    } else if(c == '/' || c == '÷') {
-        return Operation.DIVIDE
-    } else if(c == '*' || c == '×') {
-        return Operation.MULTIPLY
-    } else if(c == '^') {
-        return Operation.POWER
-    } else if(c == '%') {
-        return Operation.MODULO
-    } else if(c == '>') {
-        return Operation.GT
-    } else if(c == '<') {
-        return Operation.LT
-    } else if(c == '=') {
-        return Operation.EQUALITY
-    } else if(c == '&') {
-        return Operation.AND
-    } else if(c == '|') {
-        return Operation.OR
-    } else if(c == '√') {
-        return Operation.ROOT
-    } else if(c == '!') {
-        return Operation.FACTORIAL
-    } else if(c == '∞'){
-        return Operation.INFINITY
-    } else if(c == 't'){
-        return Operation.TAN
-    } else if(c == 'y'){
-        return Operation.ATAN
-    } else if(c == 'c'){
-        return Operation.COS
-    } else if(c == 'v'){
-        return Operation.ACOS
-    } else if(c == 's'){
-        return Operation.SIN
-    } else if(c == 'a'){
-        return Operation.ASIN
-    } else if(c == 'l'){
-        return Operation.LOG
-    } else if(c == 'n'){
-        return Operation.LN
+    when (c) {
+        '+' -> {
+            return Operation.PLUS
+        }
+        '−' -> {
+            return Operation.MINUS
+        }
+        '-' -> {
+            return Operation.NEGATIVE
+        }
+        '/', '÷' -> {
+            return Operation.DIVIDE
+        }
+        '*', '×' -> {
+            return Operation.MULTIPLY
+        }
+        '^' -> {
+            return Operation.POWER
+        }
+        '%' -> {
+            return Operation.MODULO
+        }
+        '>' -> {
+            return Operation.GT
+        }
+        '<' -> {
+            return Operation.LT
+        }
+        '=' -> {
+            return Operation.EQUALITY
+        }
+        '&' -> {
+            return Operation.AND
+        }
+        '|' -> {
+            return Operation.OR
+        }
+        '√' -> {
+            return Operation.ROOT
+        }
+        '!' -> {
+            return Operation.FACTORIAL
+        }
+        '∞' -> {
+            return Operation.INFINITY
+        }
+        't' -> {
+            return Operation.TAN
+        }
+        'y' -> {
+            return Operation.ATAN
+        }
+        'c' -> {
+            return Operation.COS
+        }
+        'v' -> {
+            return Operation.ACOS
+        }
+        's' -> {
+            return Operation.SIN
+        }
+        'a' -> {
+            return Operation.ASIN
+        }
+        'l' -> {
+            return Operation.LOG
+        }
+        'n' -> {
+            return Operation.LN
+        }
+        else -> return null
     }
 
-    return null
 }
 
 fun isOperator(c: Char) = getOperationForChar(c) != null
