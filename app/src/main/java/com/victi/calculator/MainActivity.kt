@@ -129,7 +129,7 @@ class MainActivity : AppCompatActivity() {
                 else -> directCalc.text = result.toString()
             }
             println(memCalc.text.toString())
-        } catch (e: IllegalArgumentException) {
+        } catch (e: IllegalArgumentException){
             directCalc.text = getString(R.string.error)
         }
     }
@@ -139,20 +139,15 @@ class MainActivity : AppCompatActivity() {
         val c = "÷×−+.-"
         val operator = "÷×−+"
 
-        if (operator.contains(btn.text.first()))
-            pointFlag = false
+        if (operator.contains(btn.text.first())) pointFlag = false
         if (!pointFlag && memCalc.text.isEmpty() && btn.text.first() == '−' || c.all { it != btn.text.first() }){
-            if(btn.text.first() == '−')
-                memCalc.append("-")
+            if(btn.text.first() == '−') memCalc.append("-")
             else memCalc.append(btn.text.toString())
         }
         else if (!pointFlag && memCalc.text.isNotEmpty()) {
-            if (memCalc.text.last() != '-' && c.contains(memCalc.text.last()) && btn.text.first() == '−')
-                memCalc.append("-")
-            else if (c.all { it != memCalc.text.last() } || c.all { it != btn.text.first() })
-                memCalc.append(btn.text.toString())
-            if(memCalc.text.last() == '.')
-                pointFlag = true
+            if (memCalc.text.last() != '-' && c.contains(memCalc.text.last()) && btn.text.first() == '−') memCalc.append("-")
+            else if (c.all { it != memCalc.text.last() } || c.all { it != btn.text.first() }) memCalc.append(btn.text.toString())
+            if(memCalc.text.last() == '.') pointFlag = true
         }
 
         resolve()

@@ -89,8 +89,10 @@ enum class Operation {
             LOG -> return log10(b)
             LN -> return ln(b)
             FACTORIAL -> {
-                if(a > 34f)
+                if(a > 34f) {
                     throw IllegalArgumentException("Factorial number too high: $a")
+                }
+
                 return factorial(a.toInt())
             }
             INFINITY -> return Double.POSITIVE_INFINITY
@@ -102,8 +104,7 @@ enum class Operation {
 
     private fun factorial(num: Int): Double {
         var result = 1.0
-        for(i in 2..num)
-            result *= i
+        for(i in 2..num) result *= i
         return result
     }
 }
