@@ -69,7 +69,7 @@ enum class Operation {
     fun execute(a: Double, b: Double): Double {
         when (this) {
             PLUS -> return a + b
-            MINUS -> return a - b
+            MINUS -> return (a.toBigDecimal() - b.toBigDecimal()).toDouble()
             MULTIPLY -> return a * b
             DIVIDE -> return a / b
             POWER -> return a.pow(b)
