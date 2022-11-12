@@ -105,7 +105,8 @@ class MainActivity : AppCompatActivity() {
     private fun resolve(){
         try {
             val c = "÷×−+."
-            if (memCalc.text.isEmpty()) return
+            if (memCalc.text.isEmpty())
+                return
             var expression = memCalc.text.toString()
             expression = expression
                 .replace("π", Math.PI.toString())
@@ -118,7 +119,8 @@ class MainActivity : AppCompatActivity() {
                 .replace("sin", "s")
                 .replace("log", "l")
                 .replace("ln", "n")
-            if (c.contains(expression.last())) expression = expression.dropLast(1)
+            if (c.contains(expression.last()))
+                expression = expression.dropLast(1)
             val result = Value(expression).resolve()
             when {
                 result == POSITIVE_INFINITY -> directCalc.text = "∞"
@@ -163,7 +165,6 @@ class MainActivity : AppCompatActivity() {
 
     private fun initializeUI(){
         hideBars()
-
 
         val operator = "÷×−+"
 
@@ -222,9 +223,13 @@ class MainActivity : AppCompatActivity() {
         }
 
         button_delete.setOnClickListener {
+            if (memCalc.text.isNotEmpty() && memCalc.text.last() == '.')
+                pointFlag = false
             memCalc.text = memCalc.text.dropLast(1)
-            if (memCalc.text.isEmpty()) directCalc.text = ""
-            if (memCalc.text.isNotEmpty() && operator.contains(memCalc.text.last())) pointFlag = false
+            if (memCalc.text.isEmpty())
+                directCalc.text = ""
+            if (memCalc.text.isNotEmpty() && operator.contains(memCalc.text.last()))
+                pointFlag = false
             else resolve()
         }
 
@@ -236,9 +241,12 @@ class MainActivity : AppCompatActivity() {
 
         button_enter.setOnClickListener {
             if (memCalc.text.isNotEmpty() && directCalc.text.isNotEmpty() && (!memCalc.text.contains("∞") || directCalc.text.contains("∞"))) {
-                if (directCalc.text.contains("Error")) memCalc.text = ""
-                else memCalc.text = directCalc.text
-                if(!directCalc.text.contains(".")) pointFlag = false
+                if (directCalc.text.contains("Error"))
+                    memCalc.text = ""
+                else
+                    memCalc.text = directCalc.text
+                if(!directCalc.text.contains("."))
+                    pointFlag = false
                 directCalc.text = ""
             }
         }
